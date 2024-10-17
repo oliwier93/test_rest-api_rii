@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 
 using EmployeeManagement.Api.Dtos;
-using EmployeeManagement.Domain.Entities;
-using EmployeeManagement.Domain.Services;
-using EmployeeManagement.Domain.Repositories;
-
+using EmployeeManagement.Domain.Commands;
 
 namespace EmployeeManagement.Api.Controllers
 {
@@ -12,35 +10,26 @@ namespace EmployeeManagement.Api.Controllers
     [Route("api/[controller]")]
     public class EmployeeController : ControllerBase
     {
-        private readonly IRegistryNumberGenerator _registryNumberGenerator;
-        private readonly InMemoryEmployeeRepository _employeeRepository;
+        private readonly IMediator _mediator;
 
-        public EmployeeController(IRegistryNumberGenerator registryNumberGenerator, InMemoryEmployeeRepository employeeRepository)
+        public EmployeeController(IMediator mediator)
         {
-            _registryNumberGenerator = registryNumberGenerator;
-            _employeeRepository = employeeRepository;
+            _mediator = mediator;
         }
 
         [HttpPost]
-        public IActionResult CreateEmployee([FromBody] EmployeeCreateDto dto)
+        public async Task<IActionResult> CreateEmployee([FromBody] EmployeeCreateDto dto)
         {
-            var employee = new Employee(dto.LastName, dto.Gender, _registryNumberGenerator.GenerateNext());
-            _employeeRepository.Add(employee);
+            var command = new CreateEmployeeCommand(dto.LastName, dto.Gender);
+            var employee = await _mediator.Send(command);
             return Ok(employee);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateEmployee(Guid id, [FromBody] EmployeeUpdateDto dto)
+        public async Task<IActionResult> UpdateEmployee(Guid id, [FromBody] EmployeeUpdateDto dto)
         {
-            var employee = _employeeRepository.GetById(id);
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            employee.Update(dto.LastName, dto.Gender);
-            _employeeRepository.Update(employee);
-
+            var command = new UpdateEmployeeCommand(id, dto.LastName, dto.Gender);
+            await _mediator.Send(command);
             return NoContent();
         }
     }

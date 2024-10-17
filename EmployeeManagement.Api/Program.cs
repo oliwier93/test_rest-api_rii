@@ -1,20 +1,20 @@
 using EmployeeManagement.Domain.Services;
 using EmployeeManagement.Domain.Repositories;
+using EmployeeManagement.Domain.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Dodaj serwisy do kontenera DI
 builder.Services.AddSingleton<IRegistryNumberGenerator, RegistryNumberGenerator>();
 builder.Services.AddSingleton<IEmployeeRepository, InMemoryEmployeeRepository>();
 
-// Add services to the container
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(CreateEmployeeHandler).Assembly));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
