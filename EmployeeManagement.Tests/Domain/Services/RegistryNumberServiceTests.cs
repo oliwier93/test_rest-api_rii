@@ -68,4 +68,27 @@ public class RegistryNumberGeneratorTests
         // Assert
         Assert.Equal("00000001", newNumber);
     }
+
+    [Fact]
+    public void GenerateNext_ShouldGenerateUniqueNumbersInMultithreadedEnvironment()
+    {
+        // Arrange
+        var existingNumbers = new List<string> { "00000001", "00000002", "00000003" };
+        var generator = new RegistryNumberGenerator(existingNumbers);
+        var generatedNumbers = new List<string>();
+        var lockObject = new object();
+
+        // Act
+        Parallel.For(0, 10, i =>
+        {
+            var nextNumber = generator.GenerateNext();
+            lock (lockObject)
+            {
+                generatedNumbers.Add(nextNumber);
+            }
+        });
+
+        // Assert
+        Assert.Equal(10, generatedNumbers.Distinct().Count());
+    }
 }
