@@ -23,6 +23,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapControllers(); // Upewnij się, że kontrolery są mapowane
+app.MapControllers();
 
 app.Run();
