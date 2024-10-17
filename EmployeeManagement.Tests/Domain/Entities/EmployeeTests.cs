@@ -1,8 +1,5 @@
-using Moq;
-
 using EmployeeManagement.Domain.Entities;
 using EmployeeManagement.Domain.Enums;
-using EmployeeManagement.Domain.Services;
 
 public class EmployeeTests
 {
@@ -10,11 +7,10 @@ public class EmployeeTests
     public void Employee_ShouldGenerateNewRegistryNumber_WhenCreated()
     {
         // Arrange
-        var registryNumberGeneratorMock = new Mock<IRegistryNumberGenerator>();
-        registryNumberGeneratorMock.Setup(r => r.GenerateNext()).Returns("00000001");
+        var registryNumber = "00000001";
 
         // Act
-        var employee = new Employee("Kowalski", Gender.Male, "00000001", registryNumberGeneratorMock.Object);
+        var employee = new Employee("Kowalski", Gender.Male, registryNumber);
 
         // Assert
         Assert.Equal("00000001", employee.RegistryNumber);
@@ -24,32 +20,29 @@ public class EmployeeTests
     public void Employee_ShouldThrowException_WhenLastNameIsInvalid()
     {
         // Arrange
-        var registryNumberGeneratorMock = new Mock<IRegistryNumberGenerator>();
-        registryNumberGeneratorMock.Setup(r => r.GenerateNext()).Returns("00000001");
+        var registryNumber = "00000001";
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new Employee("", Gender.Male, "00000001", registryNumberGeneratorMock.Object));
+        Assert.Throws<ArgumentException>(() => new Employee("", Gender.Male, registryNumber));
     }
 
     [Fact]
     public void Employee_ShouldThrowException_WhenGenderIsInvalid()
     {
         // Arrange
-        var registryNumberGeneratorMock = new Mock<IRegistryNumberGenerator>();
-        registryNumberGeneratorMock.Setup(r => r.GenerateNext()).Returns("00000001");
+        var registryNumber = "00000001";
         var invalidGender = (Gender)100;
 
         // Act & Assert
-        Assert.Throws<ArgumentException>(() => new Employee("Kowalski", invalidGender, "00000001", registryNumberGeneratorMock.Object));
+        Assert.Throws<ArgumentException>(() => new Employee("Kowalski", invalidGender, registryNumber));
     }
 
     [Fact]
     public void Employee_ShouldUpdateLastNameAndGender()
     {
         // Arrange
-        var registryNumberGeneratorMock = new Mock<IRegistryNumberGenerator>();
-        registryNumberGeneratorMock.Setup(r => r.GenerateNext()).Returns("00000001");
-        var employee = new Employee("Kowalski", Gender.Male, "00000001", registryNumberGeneratorMock.Object);
+        var registryNumber = "00000001";
+        var employee = new Employee("Kowalski", Gender.Male, registryNumber);
 
         // Act
         employee.Update("Nowak", Gender.Female);

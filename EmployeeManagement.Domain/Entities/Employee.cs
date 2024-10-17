@@ -10,13 +10,12 @@ namespace EmployeeManagement.Domain.Entities
         public string LastName { get; private set; }
         public Gender Gender { get; private set; }
 
-        public Employee(string lastName, Gender gender, string lastRegistryNumber, IRegistryNumberGenerator registryNumberGenerator)
+        public Employee(string lastName, Gender gender, string registryNumber)
         {
             Id = Guid.NewGuid();
-            RegistryNumber = registryNumberGenerator.GenerateNext();
+            RegistryNumber = registryNumber;
             LastName = ValidateLastName(lastName);
             Gender = ValidateGender(gender);
-
         }
 
         public void Update(string lastName, Gender gender)
