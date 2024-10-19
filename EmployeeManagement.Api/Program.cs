@@ -5,6 +5,7 @@ using MediatR;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<List<string>>(new List<string>());
 builder.Services.AddSingleton<IRegistryNumberGenerator, RegistryNumberGenerator>();
 builder.Services.AddSingleton<IEmployeeRepository, InMemoryEmployeeRepository>();
 
